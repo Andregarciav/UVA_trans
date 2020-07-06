@@ -6,9 +6,8 @@
 5) Add função para verificação da integridade do lado do servidor(contador de pacotes entregues está dentro dela)
 6) Modificação da criação da mensagem a ser enviada
 7) Novos argumentos adicionados ao cliente e ao servidor
+8) ADD funço de delay (tem que escolher se ela vai ficar no cliente ou no servidor)
 
 
 Faltando:
-1) adicionar função de delay
-2) mudar servidor de ipv6 pra ipv4 ou campos de ip do cliente para ipv6
-2) testar o sistema como um todo, só testei partes individuais(todas funcionando)
+1) testar o sistema como um todo, só testei partes individuais(todas funcionando)
