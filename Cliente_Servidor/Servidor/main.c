@@ -61,18 +61,30 @@ int main(int argc, char** argv)//argv[3] = ip do cliente
 
     size = sizeof(struct sockaddr_in6);
     printf("[SERVIDOR] Esperando cliente\n");
+    fd_set read_fds;
 
     int contador = 0;
     while (1)
     {
         memset(&buffer, 0, sizeof(buffer));
-        recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr, &size); //Recebe a mensagem do cliente
-        if(*buffer == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
-            break;
-        else{
-            avaliador(buffer, sizeof(buffer), ip_cliente, ip_server, &contador);
+        FD_ZERO(&read_fds);
+        FD_SET(server_socket, &read_fds);
+        int n = select(server_socket+1, &read_fds, NULL, NULL, NULL);
+        if(n <= 0)
+        {
+            perror("ERROR Server : select()\n");
+            close(server_socket);
+            exit(1);
         }
-
+        else {
+            recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr,
+                     &size); //Recebe a mensagem do cliente
+            if (*buffer == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
+                break;
+            else {
+                avaliador(buffer, sizeof(buffer), ip_cliente, ip_server, &contador);
+            }
+        }
     }
 
 
