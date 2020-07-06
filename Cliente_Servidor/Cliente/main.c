@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+#include <sys/select.h>
 #include "Funcoes.h"
 
 //arg[3] = tam_pacote, arg[4] = num_pacotes
@@ -60,7 +61,7 @@ int main(int argc, char** argv) {
     // A partir deste ponto, estamos conectados!
     // ------------------------------------------------------------
     printf("[CLIENT] Connected!\n");
-    int tam_payload = (int)argv[3] - 6 - 13 - ip_src- ip_dest- htons(IPPROTO_UDP);;
+    int tam_payload = (int)argv[3] - 6 - 13 - sizeof(ip_src)- sizeof(ip_dest)- htons(IPPROTO_UDP);;
     int tam_dados = tam_payload-5-5;
     //tem -5-5 representando a checksum e o identificador
     //16 bits representam até 65000, mas não consegui fazer 16 bits serem 2 bytes então coloquei como 5 bytes
@@ -71,29 +72,38 @@ int main(int argc, char** argv) {
     uint16_t id = 0;
     char check_string[5];
     char id_string[5];
-
     FD_ZERO(&fds);//Reseta todos os bits
     FD_SET (client_socket, &fds);
     for(int i =0; i<(int)(argv[4]); i++) {
-        msg = malloc(tam_payload*sizeof(char));
-        memset(&buffer, 0, sizeof(buffer));  //Zera Memoria da variável
-        if(i==(int)(argv[4])-1){
-            *msg = 's';
-        }
+            msg = malloc(tam_payload * sizeof(char));
+            memset(&buffer, 0, sizeof(buffer));//Zera Memoria da variável
+            FD_ZERO(&fds);//Reseta todos os bits
+            FD_SET (client_socket, &fds);
+            int n = select(client_socket+1, NULL, &fds, NULL, NULL);
+            if(n <= 0)
+            {
+                perror("ERROR Server : select()\n");
+                close(client_socket);
+                exit(1);
+            }
+            else {
+                if (i == (int) (argv[4]) - 1) {
+                    *msg = 's';
+                } else {
+                    id++;
+                    sprintf(id_string, "%u", id);
+                    strcat(msg, id_string);
+                    strcat(msg, dados = geraPayload(tam_dados));
+                    checksum = calculaChecksum(msg, tam_payload + 1, ip_src, ip_dest);
+                    sprintf(check_string, "%u", checksum);
+                    strcat(msg, check_string);
+                }
+                bytes = strlen(msg);
+                write(client_socket, msg, bytes);
+                memset(&msg, 0, sizeof(msg)); //Zera Memoria da variável
+                free(msg);
+            }
 
-        else{
-            id++;
-            sprintf(id_string, "%u", id);
-            strcat(msg, id_string);
-            strcat(msg, dados = geraPayload(tam_dados));
-            checksum = calculaChecksum(msg, tam_payload + 1, ip_src, ip_dest);
-            sprintf(check_string, "%u", checksum);
-            strcat(msg, check_string);
-        }
-        bytes = strlen(msg);
-        write(client_socket, msg, bytes);
-        memset(&msg, 0, sizeof(msg)); //Zera Memoria da variável
-        free(msg);
     }
 
     close(client_socket); // Releasing the socket.
