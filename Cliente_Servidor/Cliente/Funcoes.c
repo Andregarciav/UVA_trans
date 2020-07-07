@@ -1,20 +1,12 @@
 #include "Funcoes.h"
 
 
-uint16_t calculaChecksum(char* buf, int len, uint32_t ip_src, uint32_t ip_dest){
+uint16_t calculaChecksum(char* buf, int len){
     uint32_t sum = 0x0000;
-    uint16_t *src_addr = (void*)&ip_src, *dest_addr = (void*)&ip_dest;
     int i;
     for (i = 0; i < len; i++){
         sum = sum + (uint8_t)buf[i];
     }
-    sum += *(src_addr++);
-    sum += *src_addr;
-
-    sum += *(dest_addr++);
-    sum += *dest_addr;
-
-    sum += htons(IPPROTO_UDP);
     while (sum >> 16)
         sum = (sum & 0xFFFF) + (sum >> 16);
     return (uint16_t)~sum;
