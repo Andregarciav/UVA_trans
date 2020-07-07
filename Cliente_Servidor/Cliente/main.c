@@ -15,8 +15,6 @@
 int main(int argc, char** argv) {
 
     int client_socket, bytes, rv;
-    char* ip_src, *ip_dest = argv[1];
-    ip_src = "127.0.0.1";
     struct sockaddr_in6;
 
     fd_set fds;
@@ -61,10 +59,10 @@ int main(int argc, char** argv) {
     // A partir deste ponto, estamos conectados!
     // ------------------------------------------------------------
     printf("[CLIENT] Connected!\n");
-    int tam_payload = (int)argv[3] - 6 - 13 - sizeof(ip_src)- sizeof(ip_dest)- htons(IPPROTO_UDP);;
+    int tam_payload = (int)argv[3] - 6 - 13;// 6 do tamanho do header udp (8 - 2 da checksum) e 13 do pacote do openvlc
     int tam_dados = tam_payload-5-5;
     //tem -5-5 representando a checksum e o identificador
-    //16 bits representam até 65000, mas não consegui fazer 16 bits serem 2 bytes então coloquei como 5 bytes
+    //16 bits representam até 65000, mas não consegui fazer 16 bits serem 2 bytes(2 posições no vetor) então coloquei como 5 bytes
     //convertendo de int pra char
     char *msg = NULL;//msg  = identificador + dados + checksum
     char *dados = NULL;
@@ -94,7 +92,7 @@ int main(int argc, char** argv) {
                     sprintf(id_string, "%u", id);
                     strcat(msg, id_string);
                     strcat(msg, dados = geraPayload(tam_dados));
-                    checksum = calculaChecksum(msg, tam_payload + 1, ip_src, ip_dest);
+                    checksum = calculaChecksum(msg, tam_payload + 1);
                     sprintf(check_string, "%u", checksum);
                     strcat(msg, check_string);
                 }
