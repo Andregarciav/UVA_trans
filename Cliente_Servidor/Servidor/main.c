@@ -79,7 +79,7 @@ int main(int argc, char** argv)//argv[3] = ip do cliente
        // else {
             recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr,
                      &size); //Recebe a mensagem do cliente
-            if (*buffer[0] == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
+            if (*buffer == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
                 break;
             else {
                 avaliador(buffer, sizeof(buffer), ip_cliente, ip_server, &contador);
