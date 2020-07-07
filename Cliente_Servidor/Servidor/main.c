@@ -17,13 +17,11 @@
 
 
 
-int main(int argc, char** argv)//argv[3] = ip do cliente
+int main(int argc, char** argv)
 {
     int server_socket, v6only;
     char buffer[2000];
     unsigned int size;
-    char *ip_cliente, *ip_server = "127.0.0.1";
-    ip_cliente=argv[3];
 
     struct sockaddr_in6 server_addr, client_addr;
 
@@ -67,6 +65,7 @@ int main(int argc, char** argv)//argv[3] = ip do cliente
     while (1)
     {
         memset(&buffer, 0, sizeof(buffer));
+        //O que ta comentando aqui é a parte de delay
         //FD_ZERO(&read_fds);
         //FD_SET(server_socket, &read_fds);
         //int n = select(server_socket+1, &read_fds, NULL, NULL, NULL);
@@ -77,12 +76,11 @@ int main(int argc, char** argv)//argv[3] = ip do cliente
            // exit(1);
        // }
        // else {
-            recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr,
-                     &size); //Recebe a mensagem do cliente
+            recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr, &size); //Recebe a mensagem do cliente
             if (*buffer == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
                 break;
             else {
-                avaliador(buffer, sizeof(buffer), ip_cliente, ip_server, &contador);
+                avaliador(buffer, sizeof(buffer), &contador);
            // }
         }
     }
