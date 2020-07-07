@@ -7,6 +7,6 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 
-uint16_t calculaChecksum(char* buf, int len, uint32_t ip_src, uint32_t ip_dest);
+uint16_t calculaChecksum(char* buf, int len);
 char *geraPayload(int N);
 #endif //UDP_C_CHECKSUM_H
