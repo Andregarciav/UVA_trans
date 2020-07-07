@@ -67,23 +67,23 @@ int main(int argc, char** argv)//argv[3] = ip do cliente
     while (1)
     {
         memset(&buffer, 0, sizeof(buffer));
-        FD_ZERO(&read_fds);
-        FD_SET(server_socket, &read_fds);
-        int n = select(server_socket+1, &read_fds, NULL, NULL, NULL);
-        if(n <= 0)
-        {
-            perror("ERROR Server : select()\n");
-            close(server_socket);
-            exit(1);
-        }
-        else {
+        //FD_ZERO(&read_fds);
+        //FD_SET(server_socket, &read_fds);
+        //int n = select(server_socket+1, &read_fds, NULL, NULL, NULL);
+        //if(n <= 0)
+       // {
+            //perror("ERROR Server : select()\n");
+           // close(server_socket);
+           // exit(1);
+       // }
+       // else {
             recvfrom(server_socket, buffer, 2000, 0, (struct sockaddr *) &client_addr,
                      &size); //Recebe a mensagem do cliente
-            if (*buffer == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
+            if (*buffer[0] == 's')//aqui tem que mudar, não é só o buffer, é o buffer na primeira posição do payload
                 break;
             else {
                 avaliador(buffer, sizeof(buffer), ip_cliente, ip_server, &contador);
-            }
+           // }
         }
     }
 
