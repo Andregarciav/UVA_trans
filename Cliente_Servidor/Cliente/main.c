@@ -17,6 +17,10 @@ int main(int argc, char** argv) {
     int client_socket, bytes, rv;
     struct sockaddr_in6;
 
+    int tam_pkt = 0; //sempre que possivel inicialize variável com algum valor, só não set em caso de competição como URIjudge
+    int num_pkt = 0;
+
+
     fd_set fds;
     clock_t inicio, final , startTime , endTime;
 
@@ -27,6 +31,11 @@ int main(int argc, char** argv) {
         printf("\n[CLIENT] Error Args.\n\n");
         exit(1);
     }
+    
+    /* Após a verificação vamos salvar os argumentos já como variáveis, fica melhor*/
+    tam_pkt = atoi(argv[3]); //não faça cast de char para int ele vai usar tabela ascii
+    num_pkt = atoi(argv[4]);
+
 
     memset(&hints, 0, sizeof hints);    // Fills the struct with zeros
     hints.ai_family = AF_UNSPEC;        // Allows IPv4 or IPv6
@@ -59,7 +68,7 @@ int main(int argc, char** argv) {
     // A partir deste ponto, estamos conectados!
     // ------------------------------------------------------------
     printf("[CLIENT] Connected!\n");
-    int tam_payload = (int)argv[3] - 6 - 13;// 6 do tamanho do header udp (8 - 2 da checksum) e 13 do pacote do openvlc
+    int tam_payload = tam_pkt - 6 - 13;// 6 do tamanho do header udp (8 - 2 da checksum) e 13 do pacote do openvlc
     int tam_dados = tam_payload-5-5;
     //tem -5-5 representando a checksum e o identificador
     //16 bits representam até 65000, mas não consegui fazer 16 bits serem 2 bytes(2 posições no vetor) então coloquei como 5 bytes
@@ -72,9 +81,9 @@ int main(int argc, char** argv) {
     char id_string[5];
     FD_ZERO(&fds);//Reseta todos os bits
     FD_SET (client_socket, &fds);
-    for(int i =0; i<(int)(argv[4]); i++) {
+    for(int i =0; i<(int)num_pkt; i++) {
             msg = malloc(tam_payload * sizeof(char));
-            memset(&buffer, 0, sizeof(buffer));//Zera Memoria da variável
+            // memset(&buffer, 0, sizeof(buffer));//Zera Memoria da variável
             FD_ZERO(&fds);//Reseta todos os bits
             FD_SET (client_socket, &fds);
             int n = select(client_socket+1, NULL, &fds, NULL, NULL);
@@ -85,7 +94,7 @@ int main(int argc, char** argv) {
                 exit(1);
             }
             else {
-                if (i == (int) (argv[4]) - 1) {
+                if (i == num_pkt - 1) {
                     *msg = 's';
                 } else {
                     id++;
