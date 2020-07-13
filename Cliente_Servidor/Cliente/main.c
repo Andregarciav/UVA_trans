@@ -113,7 +113,10 @@ int main(int argc, char** argv) {
             // else {
             while (n != 0);    
                 if (i == num_pkt - 1) {
-                    *msg = 's';
+                    // *msg = 's';
+                    // melhor fazer assim
+                    msg[0] = 's';
+                    msg[1] = '\0';
                 } else {
                     id++;
                     sprintf(id_string, "%x", id);
