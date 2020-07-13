@@ -7,6 +7,8 @@
 6) Modificação da criação da mensagem a ser enviada
 7) Novos argumentos adicionados ao cliente e ao servidor
 8) ADD funço de delay (tem que escolher se ela vai ficar no cliente ou no servidor)
+9) ADD gitignore
+10) ADD Makefile
 
 
 Faltando:
