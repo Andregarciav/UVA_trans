@@ -25,8 +25,9 @@ int main(int argc, char** argv)
 
     struct sockaddr_in6 server_addr, client_addr;
 
-    if(argc != 3) {
+    if(argc != 2) {
         printf("\n[SERVIDOR] Erro nos argumentos.\n\n");
+        printf("./servidor [numero da porta]\n");
         exit(1);
     }
     server_socket = socket( AF_INET6, SOCK_DGRAM , 0 );

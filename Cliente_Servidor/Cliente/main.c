@@ -19,31 +19,40 @@ int main(int argc, char** argv) {
 
     int tam_pkt = 0; //sempre que possivel inicialize variável com algum valor, só não set em caso de competição como URIjudge
     int num_pkt = 0;
+    char *ip_server;
+    char *porta_server;
+
 
 
     fd_set fds;
     clock_t inicio, final , startTime , endTime;
+
+    struct timeval tv;
+    
 
 
     struct addrinfo hints, *list, *item;
     /* Checking the arguments */
     if(argc != 5) {
         printf("\n[CLIENT] Error Args.\n\n");
-        exit(1);
+        printf("./cliente [IP servidor] [Porta servidor] [tamanho do pacote] [numero de pacotes]\n");
+        exit(EXIT_FAILURE);
     }
     
     /* Após a verificação vamos salvar os argumentos já como variáveis, fica melhor*/
-    tam_pkt = atoi(argv[3]); //não faça cast de char para int ele vai usar tabela ascii
-    num_pkt = atoi(argv[4]);
+    ip_server       = argv[1];
+    porta_server    = argv[2];
+    tam_pkt         = atoi(argv[3]); //não faça cast de char para int ele vai usar tabela ascii
+    num_pkt         = atoi(argv[4]);
 
 
     memset(&hints, 0, sizeof hints);    // Fills the struct with zeros
     hints.ai_family = AF_UNSPEC;        // Allows IPv4 or IPv6
     hints.ai_socktype = SOCK_DGRAM;     // Only UDP
 
-    if((rv = getaddrinfo(argv[1], argv[2], &hints, &list)) != 0) { // argv[1] address argv[2] port
+    if((rv = getaddrinfo(ip_server, porta_server, &hints, &list)) != 0) { // argv[1] address argv[2] port
         printf("[CLIENT] Error bad getaddrinfo: %s\n", gai_strerror(rv));
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
 
@@ -76,29 +85,38 @@ int main(int argc, char** argv) {
     char *msg = NULL;//msg  = identificador + dados + checksum
     char *dados = NULL;
     uint16_t checksum = 0;
-    uint16_t id = 0;
+    int id = 0;
     char check_string[5];
     char id_string[5];
     FD_ZERO(&fds);//Reseta todos os bits
     FD_SET (client_socket, &fds);
+    msg = malloc((tam_payload +1) * sizeof(char));
+    if (!msg){
+        printf("ERRO ao alocar memoria para o pacote");
+        exit(EXIT_FAILURE);
+    }
+    
     for(int i =0; i<(int)num_pkt; i++) {
-            msg = malloc(tam_payload * sizeof(char));
             // memset(&buffer, 0, sizeof(buffer));//Zera Memoria da variável
             FD_ZERO(&fds);//Reseta todos os bits
-            FD_SET (client_socket, &fds);
-            int n = select(client_socket+1, NULL, &fds, NULL, NULL);
-            if(n <= 0)
-            {
-                perror("ERROR Server : select()\n");
-                close(client_socket);
-                exit(1);
-            }
-            else {
+            FD_SET (client_socket, &fds); //Estabelece o bit que corresponde ao socket clientSocket
+            tv.tv_sec = 2; //Estabelece o valor de time out de 7 segundos
+            tv.tv_usec = 0; //Estabeele o valor de time de 0 milissegundos
+
+            int n = select(client_socket, &fds, NULL, NULL, &tv);
+            // if(n <= 0)
+            // {
+            //     perror("ERROR Server : select()\n");
+            //     close(client_socket);
+            //     exit(1);
+            // }
+            // else {
+            while (n != 0);    
                 if (i == num_pkt - 1) {
                     *msg = 's';
                 } else {
                     id++;
-                    sprintf(id_string, "%u", id);
+                    sprintf(id_string, "%x", id);
                     strcat(msg, id_string);
                     strcat(msg, dados = geraPayload(tam_dados));
                     checksum = calculaChecksum(msg, tam_payload + 1);
@@ -108,11 +126,11 @@ int main(int argc, char** argv) {
                 bytes = strlen(msg);
                 write(client_socket, msg, bytes);
                 memset(&msg, 0, sizeof(msg)); //Zera Memoria da variável
-                free(msg);
-            }
+            // }
 
     }
-
+    
+    free(msg);
     close(client_socket); // Releasing the socket.
     freeaddrinfo(list); // Releasing the memory!!
     return 0;
