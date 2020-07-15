@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
      aux2 = buffer[1];
      id = (aux1 << 8) | aux2;
      fprintf(fp,"ID %d\n", id);
+     printf("ID %d\n, id);
 
 
     /* Convert message received to uppercase */
