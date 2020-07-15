@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   for(int i =0; i<(int)num_pkt+1; i++) {
       memset(&buffer, 0, sizeof(buffer));
       j= 0;
-      tv.tv_sec = 2; //Estabelece o valor de time out de 7 segundos
+      tv.tv_sec = 0; //Estabelece o valor de time out de 7 segundos
       tv.tv_usec = 0; //Estabeele o valor de time de 0 milissegundos
       int n = select(clientSocket, &fds, NULL, NULL, &tv);
       //while (n != 0);
