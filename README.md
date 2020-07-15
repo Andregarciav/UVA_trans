@@ -10,4 +10,5 @@
 9) ADD gitignore
 10) ADD Makefile
 
+Obs: para testes locais, o parametro do ip do servidor deve ser 127.0.0.1, usando localhost da problema
 
