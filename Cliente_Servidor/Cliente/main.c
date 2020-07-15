@@ -54,14 +54,14 @@ int main(int argc, char** argv) {
   int j =0;
   printf("Cliente enviando\n");
   int sucesso = 0;
-  for(int i =0; i<(int)num_pkt+1; i++) {
+  for(int i =0; i<(((int)num_pkt)+1); i++) {
       memset(&buffer, 0, sizeof(buffer));
       j= 0;
       tv.tv_sec = 0; //Estabelece o valor de time out de 7 segundos
-      tv.tv_usec = 0; //Estabeele o valor de time de 0 milissegundos
+      tv.tv_usec = 20; //Estabeele o valor de time de 0 milissegundos
       int n = select(clientSocket, &fds, NULL, NULL, &tv);
       //while (n != 0);
-      if (i == num_pkt - 1) {
+      if (i == num_pkt) {
           // *buffer = 's';
           // melhor fazer assim
           buffer[0] = 's';
