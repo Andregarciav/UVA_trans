@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 
 uint16_t calculaChecksum(char* buf, int len);
-void avaliador(char *msg, int tam, int *contador);
+int avaliador(char* msg, int tam);
 
 
 #endif //UDP_C_CHECKSUM_H
