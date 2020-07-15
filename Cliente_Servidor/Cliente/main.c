@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
       j= 0;
       tv.tv_sec = 0; //Estabelece o valor de time out de 7 segundos
       tv.tv_usec = 20; //Estabeele o valor de time de 0 milissegundos
-      int n = select(clientSocket, &fds, NULL, NULL, &tv);
+      //int n = select(clientSocket, &fds, NULL, NULL, &tv);
       //while (n != 0);
       if (i == num_pkt) {
           // *buffer = 's';
