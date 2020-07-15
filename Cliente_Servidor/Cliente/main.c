@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   int j =0;
   printf("Cliente enviando\n");
   int sucesso = 0;
-  for(int i =0; i<(int)num_pkt; i++) {
+  for(int i =0; i<(int)num_pkt+1; i++) {
       memset(&buffer, 0, sizeof(buffer));
       j= 0;
       tv.tv_sec = 2; //Estabelece o valor de time out de 7 segundos
